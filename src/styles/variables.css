@@ -1,0 +1,57 @@
+:root {
+  --bg: #f8f8fc;
+  --kartu: #ffffff;
+  --garis: #e6e2ee;
+  --garis-terang: #f0ecf6;
+  --lav: #eee8f8;
+  --lav-terang: #f6f3fc;
+  --ungu: #6c47c9;
+  --ungu-hover: #5b37b4;
+  --ungu2: #b49fed;
+  --ungu-muda: #e9e1fb;
+  --teks: #211d33;
+  --abu: #726b80;
+  --abu-muda: #9c95aa;
+  --ok: #20864e;
+  --ok-bg: #e6f6ee;
+  --salah: #d34e34;
+  --salah-bg: #faeae7;
+  --peringatan: #c97d10;
+  --peringatan-bg: #fef5e7;
+  --info: #2176bd;
+  --info-bg: #e7f2fa;
+  --bayangan: 0 4px 18px rgba(108, 71, 201, 0.07);
+  --bayangan-hover: 0 8px 24px rgba(108, 71, 201, 0.15);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15121e;
+    --kartu: #1e192b;
+    --garis: #322b44;
+    --garis-terang: #262036;
+    --lav: #28213b;
+    --lav-terang: #201931;
+    --ungu: #9b7beb;
+    --ungu-hover: #ad91f0;
+    --ungu2: #6d58a8;
+    --ungu-muda: #332850;
+    --teks: #f2eefc;
+    --abu: #9f96b0;
+    --abu-muda: #797187;
+    --ok: #4ec282;
+    --ok-bg: #163624;
+    --salah: #ea6c53;
+    --salah-bg: #3d1c16;
+    --peringatan: #e8a032;
+    --peringatan-bg: #38270d;
+    --info: #4ea8ec;
+    --info-bg: #142838;
+    --bayangan: 0 4px 18px rgba(0, 0, 0, 0.25);
+    --bayangan-hover: 0 8px 24px rgba(155, 123, 235, 0.2);
+  }
+}
