@@ -1,77 +1,65 @@
-# ruang. — Dashboard Pembelajaran Adaptif (React)
+# ruang. — Dashboard Pembelajaran Adaptif (FSLSM × K-Means)
 
-Aplikasi web dashboard pembelajaran adaptif berbasis model gaya belajar **FSLSM** (Felder-Silverman Learning Style Model) dan klastering log aktivitas LMS **K-Means**.
-
-Proyek ini telah direstrukturisasi secara rapi dan modular, dilengkapi dengan **Sistem Login 3 Hak Akses** (Mahasiswa dengan NIM, Dosen, dan Pembuat Web), **Fitur Dosen untuk Mengunggah Materi, Kuis, dan Tugas**, serta **Sisi Mahasiswa yang Otomatis Dipersonalisasi oleh Machine Learning** dengan tetap **mempertahankan 100% gaya visual, warna, tata letak, dan animasi aslinya**.
+Sistem dashboard pembelajaran adaptif berbasis React yang memadukan kerangka preferensi belajar **Felder-Silverman Learning Style Model (FSLSM)** dengan pengelompokan pola interaksi aktivitas log LMS menggunakan **K-Means Clustering**.
 
 ---
 
-## 🚀 Cara Menjalankan
+## ✨ Fitur Utama
 
-1. Masuk ke direktori proyek:
-   ```bash
-   cd "C:\Users\KADEK\.gemini\antigravity\scratch\ruang-adaptive-learning"
-   ```
+1. **Sistem Login 3 Hak Akses:**
+   - 🎓 **Mahasiswa:** Masuk cukup menggunakan **NIM** (contoh: `2315091043`, `2315091092`, `2415091001`). Jalur belajar adaptif otomatis dipersonalisasi oleh model Machine Learning tanpa perlu mengatur slider profil secara manual.
+   - 👨‍🏫 **Dosen:** Masuk via akun dosen (`dosen` / `dosen123`). Memiliki portal khusus untuk mengunggah materi pembelajaran baru, membuat soal kuis formatif, dan menerbitkan tugas/pengumuman ke dashboard mahasiswa.
+   - ⚙️ **Pembuat Web (Developer):** Masuk via akun admin (`admin` / `admin123`). Dilengkapi panel pengembang untuk observasi status lingkungan, reset data ke bawaan, dan simulasi beralih peran instan.
 
-2. Jalankan server pengembangan (Dev server):
-   ```bash
-   npm run dev
-   ```
-   Akses di peramban pada alamat **`http://localhost:5173`**.
+2. **Portal Mahasiswa (Otomatis Machine Learning):**
+   - Tampilan bersih tanpa slider manual (rekomendasi jalur belajar diatur otomatis oleh model ML).
+   - Katalog materi adaptif berdasarkan gaya belajar (Visual, Latihan Interaktif, Bacaan Ringkas, Peta Konsep).
+   - Modul pembelajaran interaktif disertai kuis formatif dengan umpan balik langsung.
+   - Papan tugas & pengumuman terbaru langsung dari dosen pengampu.
+   - Riwayat pencatatan aktivitas pembelajaran.
 
-3. Build untuk produksi:
-   ```bash
-   npm run build
-   ```
+3. **Portal Dosen & Analisis Log Riset LMS:**
+   - Formulir unggah materi baru (judul, alur konsep visual, durasi, kategori FSLSM).
+   - Pembuat kuis interaktif per modul materi.
+   - Visualisasi aktivitas belajar mahasiswa: distribusi jam, hari, komposisi modul LMS, dan *scatter plot* interaksi materi teks vs konten visual H5P.
+   - Tabel data mahasiswa dengan fitur pencarian dan pengurutan dinamis berdasarkan data log nyata (`student_features.csv`).
 
----
-
-## 🎓 Sisi Mahasiswa (Personalisasi Otomatis Machine Learning)
-
-Sesuai rancangan riset, mahasiswa tidak lagi perlu mengisi atau melihat profil belajar manual:
-- **Menu Bersih & Sederhana:** Mahasiswa hanya mengakses menu penting: **Beranda**, **Materi belajar**, dan **Aktivitas**.
-- **Otomatisasi Penuh:** Urutan kurikulum materi, alur rekomendasi, dan kuis telah diatur secara otomatis di belakang layar oleh model machine learning clustering berdasarkan riwayat interaksi log LMS.
-- **Beranda Cerdas:** Menampilkan rekomendasi materi terpersonalisasi, statistik progres belajar, dan papan pengumuman/tugas langsung dari dosen pengampu.
+4. **100% Mandiri (Self-Contained):**
+   - Seluruh logika, data, state manajemen, komponen, dan CSS tersaji rapi dalam 1 file `App.jsx`.
+   - Tanpa dependensi pihak ketiga yang rumit, hanya membutuhkan React standar.
 
 ---
 
-## 👨‍🏫 Fitur Khusus Dosen: Kelola Materi, Kuis & Tugas
+## 🚀 Cara Menjalankan Proyek
 
-Pada menu **"Kelola materi & kuis"** di Portal Dosen, dosen dapat mengelola seluruh komponen pembelajaran:
+### Opsi 1: Menjalankan Repositori Ini Langsung
 
-1. **+ Unggah Materi Baru:**
-   - Memasukkan Judul Materi, Kategori Gaya Belajar FSLSM (Visual / Latihan / Bacaan), Durasi (menit), Ringkasan Konsep, Representasi Alur Visual, dan Contoh Baris Kode.
-   - Materi yang diunggah akan **langsung terbit di katalog materi mahasiswa** dan otomatis terintegrasi ke algoritma rekomendasi adaptif.
-2. **+ Buat Soal Kuis:**
-   - Memilih modul materi target.
-   - Menambahkan pertanyaan, opsi pilihan (A, B, C), menentukan kunci jawaban yang benar, dan ulasan penjelasan jawaban.
-   - Soal kuis baru langsung aktif pada sesi kuis evaluasi formatif mahasiswa.
-3. **+ Kirim Tugas & Pengumuman LMS:**
-   - Menerbitkan tugas pemrograman (Assignment), pengumuman kuliah, atau jadwal kuis baru.
-   - Pemberitahuan ini langsung masuk ke pusat notifikasi (🔔) seluruh akun mahasiswa secara seketika.
-4. **Daftar Materi Aktif:**
-   - Melihat pratinjau seluruh materi yang aktif, mengecek jumlah soal kuis yang terpasang pada tiap modul, atau menghapus materi tambahan.
+```bash
+# 1. Pasang dependensi React
+npm install
+
+# 2. Jalankan server lokal
+npm run dev
+```
+
+Buka peramban di: **`http://localhost:5173`**
+
+### Opsi 2: Menggunakan File `App.jsx` Saja
+
+Cukup buat proyek Vite React baru dan ganti file `src/App.jsx` dengan file `App.jsx` dari repositori ini:
+
+```bash
+npm create vite@latest ruang -- --template react
+# Ganti isi file src/App.jsx dengan file App.jsx dari repositori ini
+npm run dev
+```
 
 ---
 
-## 🔐 Akun & Hak Akses Sistem Login
+## 🔑 Akun Demo Pengujian
 
-### 1. Akses Mahasiswa (Login dengan NIM)
-- **Kredensial:** Masukkan Nomor Induk Mahasiswa (NIM).
-- **Contoh NIM Demo:**
-  - `2315091043` — Putu Aldi Rama Pradika Yasa (Klaster 1 · Praktik)
-  - `2315091092` — VERY IRAWAN SIMBOLON (Klaster 0 · Visual)
-  - `2415091002` — LUH INDAH SRI PUSPA DEWI (Klaster 2 · Teks & Reflektif)
-  - `2415091003` — Kadek Sukadarma (Klaster 1 · Praktik)
-- **Menu Akses:** Beranda, Materi belajar, Aktivitas.
-
-### 2. Akses Dosen
-- **Username / NIP:** `dosen` atau `198507122010121002`
-- **Kata Sandi:** `dosen123`
-- **Profil:** Dr. I Gede Dosen, M.Kom.
-- **Menu Akses:** Dashboard dosen (simulasi K-Means), **Kelola materi & kuis**, Analisis log LMS, Data mahasiswa.
-
-### 3. Akses Pembuat Web (Web Developer)
-- **Akun Developer:** `admin` atau `dev` atau `pembuat`
-- **Kata Sandi:** `admin123`
-- **Menu Akses:** Seluruh akses Dosen ditambah **Panel Pengembang** (`DevPanel.jsx`) untuk diagnostik data, simulasi peran (*user impersonation*), dan reset data.
+| Peran | Kredensial / Cara Masuk |
+| :--- | :--- |
+| **Mahasiswa** | Masukkan NIM (contoh: `2315091043` atau sembarang NIM Anda) |
+| **Dosen** | Username: `dosen` · Sandi: `dosen123` |
+| **Pembuat Web** | Username: `admin` · Sandi: `admin123` |
