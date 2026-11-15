@@ -17,6 +17,9 @@ export function TopNavbar({ currentRoute, user, onNavigate, onLogout }) {
     const mapping = {
       beranda: "Beranda Mahasiswa",
       materi: "Katalog Materi Terbuka",
+      tugas: "Penugasan & Submission (Assignment)",
+      forum: "Forum Diskusi Terbuka (Open Forum)",
+      nilai: "Laporan Nilai Akademik (User Report)",
       riwayat: "Riwayat Aktivitas & Progres",
       notif: "Pengumuman Akademik",
       dosen: "Dashboard & Ringkasan Dosen",

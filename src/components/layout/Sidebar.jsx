@@ -8,11 +8,16 @@ export function Sidebar({ currentRoute, onNavigate, user, onLogout }) {
     m: [
       { id: "beranda", label: "Beranda", icon: "home" },
       { id: "materi", label: "Katalog Materi", icon: "book" },
+      { id: "tugas", label: "Penugasan (Assignment)", icon: "clipboard" },
+      { id: "forum", label: "Forum Diskusi", icon: "message-square" },
+      { id: "nilai", label: "Laporan Nilai (Report)", icon: "trending-up" },
       { id: "riwayat", label: "Riwayat Belajar", icon: "activity" },
       { id: "notif", label: "Pengumuman", icon: "bell" }
     ],
     d: [
       { id: "dosen", label: "Dashboard Dosen", icon: "home" },
+      { id: "tugas", label: "Periksa Penugasan", icon: "clipboard" },
+      { id: "forum", label: "Moderasi Forum", icon: "message-square" },
       { id: "kelola", label: "Kelola Materi & Kuis", icon: "plus-circle" },
       { id: "analisis-log", label: "Analisis Log LMS", icon: "bar-chart" },
       { id: "data-mhs", label: "Data Mahasiswa (128)", icon: "users" }
@@ -20,6 +25,9 @@ export function Sidebar({ currentRoute, onNavigate, user, onLogout }) {
     dev: [
       { id: "dev", label: "Panel Pengembang", icon: "settings" },
       { id: "beranda", label: "Simulasi Mahasiswa", icon: "home" },
+      { id: "tugas", label: "Penugasan (Assignment)", icon: "clipboard" },
+      { id: "forum", label: "Forum Diskusi", icon: "message-square" },
+      { id: "nilai", label: "Laporan Nilai (Report)", icon: "trending-up" },
       { id: "analisis-log", label: "Visualisasi Log", icon: "bar-chart" },
       { id: "data-mhs", label: "Tabel Data (128)", icon: "users" }
     ]

@@ -6,6 +6,9 @@ import { StudentDashboard } from "./pages/StudentDashboard";
 import { CourseCatalog } from "./pages/CourseCatalog";
 import { LessonDetailPage } from "./pages/LessonDetailPage";
 import { QuizRunnerPage } from "./pages/QuizRunnerPage";
+import { AssignmentPage } from "./pages/AssignmentPage";
+import { ForumPage } from "./pages/ForumPage";
+import { UserReportPage } from "./pages/UserReportPage";
 import { TeacherDashboard } from "./pages/TeacherDashboard";
 import { AnalyticsLogPage } from "./pages/AnalyticsLogPage";
 import { StudentTablePage } from "./pages/StudentTablePage";
@@ -17,6 +20,8 @@ import { useStudentData } from "./hooks/useStudentData";
 import { useAdaptiveEngine } from "./hooks/useAdaptiveEngine";
 import { MODUL_DATA } from "./data/courseModules";
 import { QUIZ_BANK } from "./data/quizBank";
+import { INITIAL_ASSIGNMENTS } from "./data/assignmentsData";
+import { INITIAL_FORUM_THREADS } from "./data/forumData";
 
 export default function App() {
   // 1. Hash Router Navigation
@@ -56,7 +61,7 @@ export default function App() {
     }
   });
 
-  // 4. State Kurikulum & Modul (Trek Keamanan Sistem Informasi & Pemrograman)
+  // 4. State Kurikulum & Modul (H5P & Page components)
   const [modules, setModules] = useState(() => {
     try {
       const saved = localStorage.getItem("ruang_modules");
@@ -66,7 +71,7 @@ export default function App() {
     }
   });
 
-  // 5. State Kuis Formatif
+  // 5. State Kuis Formatif (Quiz component)
   const [quizzes, setQuizzes] = useState(() => {
     try {
       const saved = localStorage.getItem("ruang_quizzes");
@@ -76,7 +81,27 @@ export default function App() {
     }
   });
 
-  // 6. State Modul Selesai & Pengumuman
+  // 6. State Penugasan (Assignment & Online text submissions components)
+  const [assignments, setAssignments] = useState(() => {
+    try {
+      const saved = localStorage.getItem("ruang_assignments");
+      return saved ? JSON.parse(saved) : INITIAL_ASSIGNMENTS;
+    } catch {
+      return INITIAL_ASSIGNMENTS;
+    }
+  });
+
+  // 7. State Forum Diskusi (Open Forum component)
+  const [forumThreads, setForumThreads] = useState(() => {
+    try {
+      const saved = localStorage.getItem("ruang_forum");
+      return saved ? JSON.parse(saved) : INITIAL_FORUM_THREADS;
+    } catch {
+      return INITIAL_FORUM_THREADS;
+    }
+  });
+
+  // 8. State Modul Selesai & Pengumuman
   const [completedModules, setCompletedModules] = useState(() => {
     try {
       const saved = localStorage.getItem("ruang_completed");
@@ -94,7 +119,7 @@ export default function App() {
         : [
             {
               judul: "Tugas Praktik 01: Analisis Vektor Serangan DDoS & Wireshark",
-              isi: "Pelajari modul 'Anatomi Serangan DDoS', unduh sampel file PCAP, dan kerjakan kuis formatif sebelum hari Selasa pk 23.59 WIB.",
+              isi: "Pelajari modul 'Anatomi Serangan DDoS', unduh sampel file PCAP, dan kerjakan penugasan mandiri sebelum tanggal batas waktu.",
               waktu: "Diterbitkan Dosen Pengampu"
             },
             {
@@ -123,6 +148,14 @@ export default function App() {
   }, [quizzes]);
 
   useEffect(() => {
+    localStorage.setItem("ruang_assignments", JSON.stringify(assignments));
+  }, [assignments]);
+
+  useEffect(() => {
+    localStorage.setItem("ruang_forum", JSON.stringify(forumThreads));
+  }, [forumThreads]);
+
+  useEffect(() => {
     localStorage.setItem("ruang_completed", JSON.stringify(completedModules));
   }, [completedModules]);
 
@@ -130,7 +163,7 @@ export default function App() {
     localStorage.setItem("ruang_announcements", JSON.stringify(announcements));
   }, [announcements]);
 
-  // 7. Mesin Adaptif ALS (FSLSM x K-Means)
+  // 9. Mesin Adaptif ALS (FSLSM x K-Means)
   const studentCluster = user?.cluster !== undefined ? user.cluster : 1;
   const { profile, preferredFormat, adaptedModules } = useAdaptiveEngine(studentCluster, modules);
 
@@ -163,6 +196,54 @@ export default function App() {
     }));
   };
 
+  // Assignment Actions (Online Text Submissions & Grading)
+  const handleSubmitAssignment = (assignmentId, submissionPayload) => {
+    setAssignments((prev) =>
+      prev.map((item) =>
+        item.id === assignmentId
+          ? {
+              ...item,
+              status: "Menunggu Penilaian",
+              submissionData: submissionPayload
+            }
+          : item
+      )
+    );
+  };
+
+  const handleGradeAssignment = (assignmentId, score, feedback) => {
+    setAssignments((prev) =>
+      prev.map((item) =>
+        item.id === assignmentId
+          ? {
+              ...item,
+              status: "Dinilai",
+              nilai: score,
+              feedbackDosen: feedback
+            }
+          : item
+      )
+    );
+  };
+
+  // Forum Actions
+  const handleAddThread = (newThread) => {
+    setForumThreads((prev) => [newThread, ...prev]);
+  };
+
+  const handleAddReply = (threadId, newReply) => {
+    setForumThreads((prev) =>
+      prev.map((t) =>
+        t.id === threadId
+          ? {
+              ...t,
+              balasan: [...(t.balasan || []), newReply]
+            }
+          : t
+      )
+    );
+  };
+
   const handleAddModule = (newMod) => {
     setModules((prev) => [newMod, ...prev]);
   };
@@ -175,6 +256,8 @@ export default function App() {
     localStorage.clear();
     setModules(MODUL_DATA);
     setQuizzes(QUIZ_BANK);
+    setAssignments(INITIAL_ASSIGNMENTS);
+    setForumThreads(INITIAL_FORUM_THREADS);
     setCompletedModules({ "MOD-01": true });
     alert("Seluruh data berhasil direset ke setelan awal riset.");
     navigate("beranda");
@@ -236,6 +319,38 @@ export default function App() {
             modules={adaptedModules}
             completedModules={completedModules}
             onOpenLesson={handleOpenLesson}
+          />
+        );
+
+      case "tugas":
+        return (
+          <AssignmentPage
+            assignments={assignments}
+            user={user}
+            onSubmitAssignment={handleSubmitAssignment}
+            onGradeAssignment={handleGradeAssignment}
+          />
+        );
+
+      case "forum":
+        return (
+          <ForumPage
+            threads={forumThreads}
+            user={user}
+            onAddThread={handleAddThread}
+            onAddReply={handleAddReply}
+          />
+        );
+
+      case "nilai":
+        return (
+          <UserReportPage
+            user={user}
+            profile={profile}
+            modules={modules}
+            completedModules={completedModules}
+            quizzes={quizzes}
+            assignments={assignments}
           />
         );
 
