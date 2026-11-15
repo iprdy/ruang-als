@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TitleHeader } from "../components/common/TitleHeader";
 import { AdaptiveBadge } from "../components/common/AdaptiveBadge";
-import { predictStudentCluster } from "../services/clusterPredictor";
+import { predictStudentClusterHybrid } from "../services/clusterPredictor";
 import { Icon } from "../assets/icons";
 
 export function DeveloperPanel({
@@ -20,6 +20,7 @@ export function DeveloperPanel({
   const [practicalEngagement, setPracticalEngagement] = useState(65);
   const [activeDays, setActiveDays] = useState(28);
 
+  const [isPredicting, setIsPredicting] = useState(false);
   const [hasilPrediksi, setHasilPrediksi] = useState(null);
 
   const presetSimulasi = (tipe) => {
@@ -48,8 +49,9 @@ export function DeveloperPanel({
     setHasilPrediksi(null);
   };
 
-  const handleJalankanPrediksi = (e) => {
+  const handleJalankanPrediksi = async (e) => {
     e.preventDefault();
+    setIsPredicting(true);
 
     const dataInput = {
       visual_count: Number(visualCount) || 0,
@@ -60,12 +62,18 @@ export function DeveloperPanel({
       active_days: Number(activeDays) || 1
     };
 
-    const hasil = predictStudentCluster(dataInput);
+    const cleanNim = nimBaru.trim() || "2415099999";
+    const cleanNama = namaBaru.trim() || "Mahasiswa Baru";
+
+    // Panggil fungsi hybrid (prioritaskan Backend REST API, fallback ke client-side)
+    const hasil = await predictStudentClusterHybrid(dataInput, cleanNim, cleanNama);
+
     setHasilPrediksi({
       ...hasil,
-      nim: nimBaru.trim(),
-      nama: namaBaru.trim()
+      nim: cleanNim,
+      nama: cleanNama
     });
+    setIsPredicting(false);
   };
 
   const handleMasukSebagaiMahasiswaIni = () => {
@@ -151,27 +159,34 @@ export function DeveloperPanel({
 
       {/* Bagian 1: Form Inferensi Mahasiswa Baru */}
       <div className="kartu besar masuk" style={{ border: "2px solid var(--ungu)", background: "linear-gradient(135deg, var(--kartu) 0%, var(--lav-terang) 100%)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: "var(--ungu)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Icon name="cpu" size={20} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "10px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: "var(--ungu)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Icon name="cpu" size={20} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: "16px" }}>Simulasi Inferensi Mahasiswa Baru (Dynamic Clustering)</h3>
+              <p className="cap">Masukkan aktivitas belajar mahasiswa baru untuk menguji klasifikasi otomatis Machine Learning secara real-time.</p>
+            </div>
           </div>
-          <div>
-            <h3 style={{ fontSize: "16px" }}>Simulasi Inferensi Mahasiswa Baru (Dynamic Clustering)</h3>
-            <p className="cap">Masukkan aktivitas belajar mahasiswa baru untuk menguji klasifikasi otomatis Machine Learning secara real-time.</p>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "var(--lav)", padding: "4px 10px", borderRadius: "12px", fontSize: "11px" }}>
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--ok)", display: "inline-block" }}></span>
+            <span>Jalur: <b>FastAPI REST API + Client Engine</b></span>
           </div>
         </div>
 
         {/* Preset Buttons */}
-        <div className="chips" style={{ marginTop: "10px" }}>
+        <div className="chips" style={{ marginTop: "12px" }}>
           <span className="cap" style={{ fontWeight: 600 }}>Muat Preset Simulasi:</span>
           <button type="button" className="chip-btn" onClick={() => presetSimulasi("rendah")}>
-            Tingkat Aktivitas Rendah (Arah Klaster 0)
+            Aktivitas Rendah (Arah Klaster 0)
           </button>
           <button type="button" className="chip-btn" onClick={() => presetSimulasi("sedang")}>
-            Tingkat Aktivitas Konsisten (Arah Klaster 1)
+            Aktivitas Konsisten (Arah Klaster 1)
           </button>
           <button type="button" className="chip-btn" onClick={() => presetSimulasi("tinggi")}>
-            Tingkat Aktivitas Tinggi (Arah Klaster 2)
+            Aktivitas Tinggi (Arah Klaster 2)
           </button>
         </div>
 
@@ -220,9 +235,9 @@ export function DeveloperPanel({
             </div>
           </div>
 
-          <button type="submit" className="tombol" style={{ alignSelf: "flex-start", padding: "12px 24px" }}>
+          <button type="submit" className="tombol" disabled={isPredicting} style={{ alignSelf: "flex-start", padding: "12px 24px" }}>
             <Icon name="cpu" size={16} />
-            <span>Jalankan Prediksi Klaster Otomatis (Machine Learning)</span>
+            <span>{isPredicting ? "Sedang Mengklasifikasikan..." : "Jalankan Prediksi Klaster Otomatis (Machine Learning)"}</span>
           </button>
         </form>
 
@@ -240,6 +255,25 @@ export function DeveloperPanel({
                 <span>Masuk Portal Sebagai Mahasiswa Ini & Uji Adaptasi →</span>
               </button>
             </div>
+
+            {/* Jalur Eksekusi & Skor Keyakinan */}
+            <div style={{ marginTop: "8px", display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap", fontSize: "11.5px" }}>
+              <span className="cap">
+                Sumber Inferensi: <b>{hasilPrediksi.sourceLabel}</b>
+              </span>
+              <span>•</span>
+              <span className="cap">
+                Skor Keyakinan (Confidence): <b style={{ color: "var(--ok)" }}>{hasilPrediksi.confidenceScore}%</b>
+              </span>
+            </div>
+
+            {hasilPrediksi.probabilities && (
+              <div style={{ display: "flex", gap: "14px", marginTop: "6px", fontSize: "11px", background: "var(--lav-terang)", padding: "6px 12px", borderRadius: "8px" }}>
+                <span>P(C0): <b>{hasilPrediksi.probabilities["Cluster 0 (Selektif)"]}</b></span>
+                <span>P(C1): <b>{hasilPrediksi.probabilities["Cluster 1 (Konsisten)"]}</b></span>
+                <span>P(C2): <b>{hasilPrediksi.probabilities["Cluster 2 (Intensif)"]}</b></span>
+              </div>
+            )}
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", marginTop: "14px" }}>
               <div style={{ background: "var(--lav-terang)", padding: "10px 14px", borderRadius: "var(--radius-md)" }}>
